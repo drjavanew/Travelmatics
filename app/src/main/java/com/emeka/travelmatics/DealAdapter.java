@@ -1,6 +1,7 @@
 package com.emeka.travelmatics;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,7 +85,8 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
         return deals.size();
     }
 
-    public class DealViewHolder extends RecyclerView.ViewHolder {
+    public class DealViewHolder extends RecyclerView.ViewHolder
+    implements View.OnClickListener{
         TextView tvTitle;
         TextView tvDescription;
         TextView tvPrice;
@@ -95,6 +97,7 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
             tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
             tvPrice = (TextView) itemView.findViewById(R.id.tvPrice);
             imgView = (ImageView) itemView.findViewById(R.id.imageDeal);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(TravelDeal deal){
@@ -103,6 +106,16 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
             tvPrice.setText(deal.getPrice());
             int i = R.drawable.ic_launcher_background;
             imgView.setImageResource(i);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            Log.d("Click", String.valueOf(position));
+            TravelDeal selectedDeal = deals.get(position);
+            Intent intent = new Intent(view.getContext(), DealActivity.class);
+            intent.putExtra("Deal", selectedDeal);
+            view.getContext().startActivity(intent);
         }
     }
 }
