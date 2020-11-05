@@ -43,9 +43,9 @@ public class FirebaseUtil {
                             Toast.LENGTH_SHORT).show();
                 }
             };
-            mDeals = new ArrayList<TravelDeal>();
-            mDatabaseReference = mFirebaseDatabase.getReference().child(ref);
         }
+        mDeals = new ArrayList<TravelDeal>();
+        mDatabaseReference = mFirebaseDatabase.getReference().child(ref);
     }
     public static void signIn(){
         // [START auth_fui_create_intent]
