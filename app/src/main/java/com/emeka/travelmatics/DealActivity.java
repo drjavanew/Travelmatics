@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -134,6 +135,21 @@ public class DealActivity extends AppCompatActivity {
             return;
         }
         mDatabaseReference.child(deal.getId()).removeValue();
+        Log.d("image name", deal.getImageName());
+        if(deal.getImageName() != null && deal.getImageName().isEmpty() == false){
+            StorageReference picRef = FirebaseUtil.mStorage.getReference().child(deal.getImageName());
+            picRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d("Delete Image", "Image Successfully Deleted");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("Delete Image", e.getMessage());
+                }
+            });
+        }
     }
 
     private void backToList(){
@@ -160,6 +176,11 @@ public class DealActivity extends AppCompatActivity {
                     }
 
                     // Continue with the task to get the download URL
+                    Log.d("ref.getName()",ref.getName());
+                    Log.d("path",task.getResult().getStorage().getPath());
+                    String pictureName = task.getResult().getStorage().getPath();
+                    deal.setImageName(pictureName);
+
                     return ref.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -168,6 +189,7 @@ public class DealActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         String url = task.getResult().toString();
                         deal.setImageUrl(url);
+                        Log.d("Url: ", url);
                         showImage(url);
                     } else {
                         // Handle failures
