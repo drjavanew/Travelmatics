@@ -2,6 +2,7 @@ package com.emeka.travelmatics;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -26,6 +28,8 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
     private ChildEventListener mChildListener;
+    private ImageView imageDeal;
+
 
     public DealAdapter(){
         //FirebaseUtil.openFbReference("traveldeals", null);
@@ -90,13 +94,12 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
         TextView tvTitle;
         TextView tvDescription;
         TextView tvPrice;
-        ImageView imgView;
         public DealViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
             tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
             tvPrice = (TextView) itemView.findViewById(R.id.tvPrice);
-            imgView = (ImageView) itemView.findViewById(R.id.imageDeal);
+            imageDeal = (ImageView) itemView.findViewById(R.id.imageDeal);
             itemView.setOnClickListener(this);
         }
 
@@ -104,8 +107,11 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
             tvTitle.setText(deal.getTitle());
             tvDescription.setText(deal.getDescription());
             tvPrice.setText(deal.getPrice());
-            int i = R.drawable.ic_launcher_background;
-            imgView.setImageResource(i);
+            if(deal.getImageUrl() != null && deal.getImageUrl().isEmpty() == false) {
+                showImage(deal.getImageUrl());
+            } else {
+                imageDeal.setImageResource(R.drawable.ic_launcher_background);
+            }
         }
 
         @Override
@@ -116,6 +122,16 @@ public class DealAdapter extends RecyclerView.Adapter<DealAdapter.DealViewHolder
             Intent intent = new Intent(view.getContext(), DealActivity.class);
             intent.putExtra("Deal", selectedDeal);
             view.getContext().startActivity(intent);
+        }
+    }
+
+    private void showImage(String url){
+        if(url != null && url.isEmpty() == false){
+            Picasso.get()
+                    .load(url)
+                    .resize(280, 280)
+                    .centerCrop()
+                    .into(imageDeal);
         }
     }
 }
